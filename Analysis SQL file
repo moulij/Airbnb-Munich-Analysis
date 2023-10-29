@@ -1,1 +1,29 @@
-Airbnb online site connects renters who rent their home and rooms to the travellers who require temporary place to stay. This project helps host or guest to analysis the airbnb munich market place to gain insights and make decisions based on in.
+# Airbnb online site connects renters who rent their home and rooms to the travellers who require temporary place to stay. This project helps host or guest to analysis the airbnb munich market place to gain insights and make decisions based on in.
+#This project includes listings, calender and review files which provides the properties regarding the location, price, public revies, availabilty for the munich city.
+
+# Find top 20 most successful place
+
+USE airbnb; 
+SELECT id, listing_url, name, 30 - availability_30 AS booked_out_30 , 
+CAST(REPLACE(Price,'$','') AS UNSIGNED) AS price_clean, 
+CAST(REPLACE(Price,'$','') AS UNSIGNED)*(30 - availability_30) / beds AS proj_rev_30
+FROM listings ORDER BY proj_rev_30 DESC LIMIT 20;
+
+# Find top 5 popular neighbourhoods
+
+SELECT TOP 5 neighbourhood_cleansed
+FROM listings
+GROUP BY neighbourhood_cleansed
+ORDER BY count(*) DESC;
+
+# Find top 10 popular hosts
+SELECT TOP 10 host_name
+FROM listings
+GROUP BY host_name
+ORDER BY count(*) DESC;
+
+# Find dirty hosts
+
+SELECT host_id, host_url, host_name, COUNT(*) AS num_dirty_reviews FROM reviews INNER JOIN listings ON reviews.listing_id = listings.id
+WHERE comments LIKE "%dirty%"
+GROUP BY host_id, host_url, host_name ORDER BY num_dirty_reviews DESC;
